@@ -5,6 +5,8 @@ const colorOptionsDiv = document.getElementById('colors-js-puns');
 const designSelect = document.getElementById('design');
 const colorSelect = document.getElementById('color');
 const colorOptions = document.querySelectorAll('#color option');
+const activities = document.querySelector('.activities');
+const activitiesCheckboxes = document.querySelectorAll('.activities input');
 // const colorOptions = document.querySelectorAll('#color option');
 
 // Hide color options and set select to "Please select" option
@@ -21,6 +23,8 @@ const pleaseOption = document.createElement('option');
 pleaseOption.textContent = "Please select a T-shirt theme";
 colorSelect.add(pleaseOption, 0);
 hideColorOptions();
+// When page loads, set focus on the first field
+window.onload = nameInput.focus();
 // colorOptionsDiv.style.display = 'none';
 
 function updateColors(themeText) {
@@ -69,5 +73,22 @@ designSelect.addEventListener('change', (e) => {
   updateColors(selectedText);
 });
 
-// When page loads, set focus on the first field
-window.onload = nameInput.focus();
+activities.addEventListener('change', (e) => {
+  // Loop through activitiesCheckboxes and toggle ones that match clicked's date-time
+  const clicked = e.target;
+  const clickedTime = clicked.getAttribute('data-day-and-time');
+
+  // Loop through activitiesCheckboxes and toggle ones that match clicked's date-time
+  for (let i = 0; i < activitiesCheckboxes.length; i++) {
+    const checkboxTime = activitiesCheckboxes[i].getAttribute('data-day-and-time');
+    if (checkboxTime === clickedTime && activitiesCheckboxes[i] !== clicked) {
+      if (clicked.checked) {
+        activitiesCheckboxes[i].disabled = true;
+        activitiesCheckboxes[i].parentNode.style.opacity = 0.2;
+      } else {
+        activitiesCheckboxes[i].disabled = false;
+        activitiesCheckboxes[i].parentNode.style.opacity = 1;
+      };
+    };
+  };
+});
