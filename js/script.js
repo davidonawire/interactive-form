@@ -1,4 +1,5 @@
 const nameInput = document.getElementById('name');
+const titleSelect = document.getElementById('title');
 const jobOtherInput = document.getElementById('other-title');
 const colorOptionsDiv = document.getElementById('colors-js-puns');
 const designSelect = document.getElementById('design');
@@ -15,7 +16,7 @@ function hideColorOptions() {
 };
 
 // Initial set-up steps
-jobOtherInput.style.display = 'none';
+jobOtherInput.hidden = true;
 const pleaseOption = document.createElement('option');
 pleaseOption.textContent = "Please select a T-shirt theme";
 colorSelect.add(pleaseOption, 0);
@@ -55,6 +56,14 @@ function updateColors(themeText) {
 };
 
 // Add event listeners
+titleSelect.addEventListener('change', (e) => {
+  if (e.target.value == 'other') {
+    jobOtherInput.hidden = false;
+  } else {
+    jobOtherInput.hidden = true;
+  }
+});
+
 designSelect.addEventListener('change', (e) => {
   const selectedText = designSelect.options[designSelect.selectedIndex].text;
   updateColors(selectedText);
