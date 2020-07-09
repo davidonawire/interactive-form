@@ -7,6 +7,11 @@ const colorSelect = document.getElementById('color');
 const colorOptions = document.querySelectorAll('#color option');
 const activities = document.querySelector('.activities');
 const activitiesCheckboxes = document.querySelectorAll('.activities input');
+const paymentSelect = document.getElementById('payment');
+const creditDiv = document.getElementById('credit-card');
+const paypalDiv = document.getElementById('paypal');
+const bitcoinDiv = document.getElementById('bitcoin');
+const paymentDivs = [creditDiv, paypalDiv, bitcoinDiv];
 let totalCost = 0;
 // const colorOptions = document.querySelectorAll('#color option');
 
@@ -26,6 +31,9 @@ pleaseOption.textContent = "Please select a T-shirt theme";
 colorSelect.add(pleaseOption, 0);
 hideColorOptions();
 // colorOptionsDiv.style.display = 'none';
+paymentSelect.options[0].hidden = true;
+paymentSelect.selectedIndex = 1;
+updatePayment('credit card');
 
 const costDisplay = document.createElement('span');
 activities.appendChild(costDisplay);
@@ -67,7 +75,23 @@ function updateColors(themeText) {
 };
 
 function updateCost() {
-  costDisplay.innerHTML = `Total cost: $${totalCost}`;
+  costDisplay.innerHTML = `Total: $${totalCost}`;
+}
+
+function updatePayment(type) {
+  if (type === 'credit card') {
+    creditDiv.hidden = false;
+    paypalDiv.hidden = true;
+    bitcoinDiv.hidden = true;
+  } else if (type === 'paypal') {
+    creditDiv.hidden = true;
+    paypalDiv.hidden = false;
+    bitcoinDiv.hidden = true;
+  } else if (type === 'bitcoin') {
+    creditDiv.hidden = true;
+    paypalDiv.hidden = true;
+    bitcoinDiv.hidden = false;
+  }
 }
 
 // Add event listeners
@@ -112,4 +136,9 @@ activities.addEventListener('change', (e) => {
       };
     };
   };
+});
+
+paymentSelect.addEventListener('change', (e) => {
+  const selectedValue = e.target.value;
+  updatePayment(selectedValue);
 });
