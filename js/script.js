@@ -11,9 +11,8 @@ const paymentSelect = document.getElementById('payment');
 const creditDiv = document.getElementById('credit-card');
 const paypalDiv = document.getElementById('paypal');
 const bitcoinDiv = document.getElementById('bitcoin');
-const paymentDivs = [creditDiv, paypalDiv, bitcoinDiv];
+
 let totalCost = 0;
-// const colorOptions = document.querySelectorAll('#color option');
 
 // Hide color options and set select to "Please select" option
 function hideColorOptions() {
