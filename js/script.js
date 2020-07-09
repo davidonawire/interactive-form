@@ -7,6 +7,7 @@ const colorSelect = document.getElementById('color');
 const colorOptions = document.querySelectorAll('#color option');
 const activities = document.querySelector('.activities');
 const activitiesCheckboxes = document.querySelectorAll('.activities input');
+let totalCost = 0;
 // const colorOptions = document.querySelectorAll('#color option');
 
 // Hide color options and set select to "Please select" option
@@ -19,13 +20,19 @@ function hideColorOptions() {
 
 // Initial set-up steps
 jobOtherInput.hidden = true;
+
 const pleaseOption = document.createElement('option');
 pleaseOption.textContent = "Please select a T-shirt theme";
 colorSelect.add(pleaseOption, 0);
 hideColorOptions();
+// colorOptionsDiv.style.display = 'none';
+
+const costDisplay = document.createElement('span');
+activities.appendChild(costDisplay);
+
 // When page loads, set focus on the first field
 window.onload = nameInput.focus();
-// colorOptionsDiv.style.display = 'none';
+
 
 function updateColors(themeText) {
   // Extract the category portion of the theme choice text
@@ -59,6 +66,10 @@ function updateColors(themeText) {
 
 };
 
+function updateCost() {
+  costDisplay.innerHTML = `Total cost: $${totalCost}`;
+}
+
 // Add event listeners
 titleSelect.addEventListener('change', (e) => {
   if (e.target.value == 'other') {
@@ -77,10 +88,20 @@ activities.addEventListener('change', (e) => {
   // Loop through activitiesCheckboxes and toggle ones that match clicked's date-time
   const clicked = e.target;
   const clickedTime = clicked.getAttribute('data-day-and-time');
+  const clickedCost = parseInt(clicked.getAttribute('data-cost'));
+
+  // Update total cost and display it accordingly
+  if (clicked.checked) {
+    totalCost += clickedCost;
+  } else {
+    totalCost -= clickedCost;
+  }
+  updateCost();
 
   // Loop through activitiesCheckboxes and toggle ones that match clicked's date-time
   for (let i = 0; i < activitiesCheckboxes.length; i++) {
     const checkboxTime = activitiesCheckboxes[i].getAttribute('data-day-and-time');
+    const checkboxCost = parseInt(activitiesCheckboxes[i].getAttribute('data-cost'));
     if (checkboxTime === clickedTime && activitiesCheckboxes[i] !== clicked) {
       if (clicked.checked) {
         activitiesCheckboxes[i].disabled = true;
