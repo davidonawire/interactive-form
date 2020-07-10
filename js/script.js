@@ -1,4 +1,5 @@
 const nameInput = document.getElementById('name');
+const emailInput = document.getElementById('mail');
 const titleSelect = document.getElementById('title');
 const jobOtherInput = document.getElementById('other-title');
 const colorOptionsDiv = document.getElementById('colors-js-puns');
@@ -30,8 +31,8 @@ pleaseOption.textContent = "Please select a T-shirt theme";
 colorSelect.add(pleaseOption, 0);
 hideColorOptions();
 // colorOptionsDiv.style.display = 'none';
-paymentSelect.options[0].hidden = true;
-paymentSelect.selectedIndex = 1;
+paymentSelect.querySelector('option[value="select method"]').hidden = true;
+paymentSelect.querySelector('option[value="credit card"]').selected = true;
 updatePayment('credit card');
 
 const costDisplay = document.createElement('span');
@@ -73,9 +74,11 @@ function updateColors(themeText) {
 
 };
 
+
 function updateCost() {
   costDisplay.innerHTML = `Total: $${totalCost}`;
 }
+
 
 function updatePayment(type) {
   if (type === 'credit card') {
@@ -93,7 +96,46 @@ function updatePayment(type) {
   }
 }
 
+// Validation functions
+
+// Name
+const nameValidator = () => {
+  console.log('nameValidator triggered');
+  const nameValue = nameInput.value;
+  if (nameValue === '') {
+    nameInput.classList.add('error');
+    return false;
+  } else {
+    nameInput.classList.remove('error');
+    return true;
+  }
+}
+
+// Email
+const emailValidator = () => {
+  console.log('nameValidator triggered');
+  const emailValue = emailInput.value;
+  const emailMatch = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i;
+  const emailIsValid = emailMatch.test(emailValue);
+  if (!emailIsValid) {
+    emailInput.classList.add('error');
+    return false;
+  } else {
+    emailInput.classList.remove('error');
+    return true;
+  }
+}
+
+// Activities
+const activitiesValidator = () => {
+
+}
+
+// Credit card (three fields)
+
+
 // Add event listeners
+
 titleSelect.addEventListener('change', (e) => {
   if (e.target.value == 'other') {
     jobOtherInput.hidden = false;
@@ -141,3 +183,6 @@ paymentSelect.addEventListener('change', (e) => {
   const selectedValue = e.target.value;
   updatePayment(selectedValue);
 });
+
+nameInput.addEventListener('blur', nameValidator, false);
+emailInput.addEventListener('blur', emailValidator, false);
