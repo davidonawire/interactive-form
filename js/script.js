@@ -10,18 +10,14 @@ const activities = document.querySelector('.activities');
 const activitiesCheckboxes = document.querySelectorAll('.activities input');
 const paymentSelect = document.getElementById('payment');
 const creditDiv = document.getElementById('credit-card');
+const ccNumInput = document.getElementById('cc-num');
+const zipInput = document.getElementById('zip');
+const cvvInput = document.getElementById('cvv');
 const paypalDiv = document.getElementById('paypal');
 const bitcoinDiv = document.getElementById('bitcoin');
 
 let totalCost = 0;
 
-// Hide color options and set select to "Please select" option
-function hideColorOptions() {
-  colorSelect.selectedIndex = 0;
-  for (let i = 0; i < colorOptions.length; i++) {
-    colorOptions[i].hidden = true;
-  };
-};
 
 // Initial set-up steps
 jobOtherInput.hidden = true;
@@ -38,8 +34,39 @@ updatePayment('credit card');
 const costDisplay = document.createElement('span');
 activities.appendChild(costDisplay);
 
+const nameError = createErrorMsg();
+nameInput.parentNode.insertBefore(nameError, nameInput);
+const emailError = createErrorMsg();
+nameInput.parentNode.insertBefore(emailError, emailInput);
+const activitiesError = createErrorMsg();
+activities.appendChild(activitiesError);
+
+
 // When page loads, set focus on the first field
 window.onload = nameInput.focus();
+
+
+function createErrorMsg() {
+  const errSpan = document.createElement('div');
+  errSpan.classList.add('errorMsg');
+  errSpan.hidden = true;
+  return errSpan;
+}
+
+
+function showError(errDiv, msg) {
+  errDiv.textContent = msg;
+  errDiv.hidden = false;
+};
+
+
+// Hide color options and set select to "Please select" option
+function hideColorOptions() {
+  colorSelect.selectedIndex = 0;
+  for (let i = 0; i < colorOptions.length; i++) {
+    colorOptions[i].hidden = true;
+  };
+};
 
 
 function updateColors(themeText) {
@@ -77,7 +104,7 @@ function updateColors(themeText) {
 
 function updateCost() {
   costDisplay.innerHTML = `Total: $${totalCost}`;
-}
+};
 
 
 function updatePayment(type) {
@@ -98,41 +125,66 @@ function updatePayment(type) {
 
 // Validation functions
 
-// Name
 const nameValidator = () => {
   console.log('nameValidator triggered');
   const nameValue = nameInput.value;
   if (nameValue === '') {
     nameInput.classList.add('error');
+    showError(nameError, "Name field cannot be blank");
     return false;
   } else {
     nameInput.classList.remove('error');
+    nameError.hidden = true;
     return true;
   }
 }
 
-// Email
+
 const emailValidator = () => {
   console.log('nameValidator triggered');
   const emailValue = emailInput.value;
-  const emailMatch = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i;
-  const emailIsValid = emailMatch.test(emailValue);
+  const match = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i;
+  const emailIsValid = match.test(emailValue);
   if (!emailIsValid) {
     emailInput.classList.add('error');
+    showError(emailError, "Please enter a valid email address");
     return false;
   } else {
     emailInput.classList.remove('error');
+    emailError.hidden = true;
     return true;
   }
 }
 
-// Activities
-const activitiesValidator = () => {
 
+const activitiesValidator = () => {
+  console.log('nameValidator triggered');
+  // User must register for at least one activity
+  for (let i = 0; i < activitiesCheckboxes.length; i++) {
+    if (activitiesCheckboxes[i].checked) {
+      activitiesError.hidden = true;
+      return true;
+    }
+  }
+  showError(activitiesError, "Please choose at least one activity");
+  return false;
 }
 
 // Credit card (three fields)
 
+const ccValidator = (input, match) => {
+  const value = input.value;
+  const isValid = match.test(value);
+  if (!isValid) {
+    input.classList.add('error');
+    // showError(ccError, "Please enter a valid email address");
+    return false;
+  } else {
+    input.classList.remove('error');
+    // ccError.hidden = true;
+    return true;
+  }
+}
 
 // Add event listeners
 
@@ -186,3 +238,12 @@ paymentSelect.addEventListener('change', (e) => {
 
 nameInput.addEventListener('blur', nameValidator, false);
 emailInput.addEventListener('blur', emailValidator, false);
+ccNumInput.addEventListener('blur', (e) => {
+  ccValidator(ccNumInput, /^\d{13,16}$/)
+});
+zipInput.addEventListener('blur', (e) => {
+  ccValidator(zipInput, /^\d{5}$/)
+});
+cvvInput.addEventListener('blur', (e) => {
+  ccValidator(cvvInput, /^\d{3}$/)
+});
