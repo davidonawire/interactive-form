@@ -143,6 +143,12 @@ const nameValidator = () => {
 const emailValidator = () => {
   console.log('nameValidator triggered');
   const emailValue = emailInput.value;
+  if (emailValue === '') {
+    emailInput.classList.add('error');
+    showError(emailError, "Email address is required");
+    return false;
+  }
+
   const match = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i;
   const emailIsValid = match.test(emailValue);
   if (!emailIsValid) {
