@@ -40,6 +40,12 @@ const emailError = createErrorMsg();
 nameInput.parentNode.insertBefore(emailError, emailInput);
 const activitiesError = createErrorMsg();
 activities.appendChild(activitiesError);
+const cvvError = createErrorMsg();
+creditDiv.parentElement.insertBefore(cvvError, creditDiv);
+const zipError = createErrorMsg();
+creditDiv.parentElement.insertBefore(zipError, cvvError);
+const ccNumError = createErrorMsg();
+creditDiv.parentElement.insertBefore(ccNumError, zipError);
 
 
 // When page loads, set focus on the first field
@@ -51,7 +57,7 @@ function createErrorMsg() {
   errSpan.classList.add('errorMsg');
   errSpan.hidden = true;
   return errSpan;
-}
+};
 
 
 function showError(errDiv, msg) {
@@ -120,8 +126,8 @@ function updatePayment(type) {
     creditDiv.hidden = true;
     paypalDiv.hidden = true;
     bitcoinDiv.hidden = false;
-  }
-}
+  };
+};
 
 // Validation functions
 
@@ -136,8 +142,8 @@ const nameValidator = () => {
     nameInput.classList.remove('error');
     nameError.hidden = true;
     return true;
-  }
-}
+  };
+};
 
 
 const emailValidator = () => {
@@ -147,7 +153,7 @@ const emailValidator = () => {
     emailInput.classList.add('error');
     showError(emailError, "Email address is required");
     return false;
-  }
+  };
 
   const match = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i;
   const emailIsValid = match.test(emailValue);
@@ -159,8 +165,8 @@ const emailValidator = () => {
     emailInput.classList.remove('error');
     emailError.hidden = true;
     return true;
-  }
-}
+  };
+};
 
 
 const activitiesValidator = () => {
@@ -170,27 +176,27 @@ const activitiesValidator = () => {
     if (activitiesCheckboxes[i].checked) {
       activitiesError.hidden = true;
       return true;
-    }
-  }
+    };
+  };
   showError(activitiesError, "Please choose at least one activity");
   return false;
-}
+};
 
 // Credit card (three fields)
 
-const ccValidator = (input, match) => {
+const ccValidator = (input, match, errDiv, errMsg) => {
   const value = input.value;
   const isValid = match.test(value);
   if (!isValid) {
     input.classList.add('error');
-    // showError(ccError, "Please enter a valid email address");
+    showError(errDiv, errMsg);
     return false;
   } else {
     input.classList.remove('error');
-    // ccError.hidden = true;
+    errDiv.hidden = true;
     return true;
-  }
-}
+  };
+};
 
 // Add event listeners
 
@@ -199,7 +205,7 @@ titleSelect.addEventListener('change', (e) => {
     jobOtherInput.hidden = false;
   } else {
     jobOtherInput.hidden = true;
-  }
+  };
 });
 
 designSelect.addEventListener('change', (e) => {
@@ -218,7 +224,7 @@ activities.addEventListener('change', (e) => {
     totalCost += clickedCost;
   } else {
     totalCost -= clickedCost;
-  }
+  };
   updateCost();
 
   // Loop through activitiesCheckboxes and toggle ones that match clicked's date-time
@@ -245,11 +251,11 @@ paymentSelect.addEventListener('change', (e) => {
 nameInput.addEventListener('blur', nameValidator, false);
 emailInput.addEventListener('blur', emailValidator, false);
 ccNumInput.addEventListener('blur', (e) => {
-  ccValidator(ccNumInput, /^\d{13,16}$/)
+  ccValidator(ccNumInput, /^\d{13,16}$/, ccNumError, 'Card number must be 13-16 digits');
 });
 zipInput.addEventListener('blur', (e) => {
-  ccValidator(zipInput, /^\d{5}$/)
+  ccValidator(zipInput, /^\d{5}$/, zipError, 'ZIP code must be five digits');
 });
 cvvInput.addEventListener('blur', (e) => {
-  ccValidator(cvvInput, /^\d{3}$/)
+  ccValidator(cvvInput, /^\d{3}$/, cvvError, 'CVV must be three digits');
 });
