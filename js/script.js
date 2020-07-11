@@ -114,6 +114,13 @@ function updateCost() {
 };
 
 
+function hideCCErrors() {
+  ccNumError.hidden = true;
+  zipError.hidden = true;
+  cvvError.hidden = true;
+};
+
+
 function updatePayment(type) {
   if (type === 'credit card') {
     creditDiv.hidden = false;
@@ -123,10 +130,12 @@ function updatePayment(type) {
     creditDiv.hidden = true;
     paypalDiv.hidden = false;
     bitcoinDiv.hidden = true;
+    hideCCErrors();
   } else if (type === 'bitcoin') {
     creditDiv.hidden = true;
     paypalDiv.hidden = true;
     bitcoinDiv.hidden = false;
+    hideCCErrors();
   };
 };
 
