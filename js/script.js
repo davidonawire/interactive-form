@@ -27,7 +27,7 @@ const pleaseOption = document.createElement('option');
 pleaseOption.textContent = "Please select a T-shirt theme";
 colorSelect.add(pleaseOption, 0);
 hideColorOptions();
-// colorOptionsDiv.style.display = 'none';
+colorOptionsDiv.hidden = true;
 paymentSelect.querySelector('option[value="select method"]').hidden = true;
 paymentSelect.querySelector('option[value="credit card"]').selected = true;
 updatePayment('credit card');
@@ -85,11 +85,11 @@ function updateColors(themeText) {
 
   // Reset things if no theme is chosen
   if (themeText === 'Select Theme') {
-    // colorOptionsDiv.hidden = true;
+    colorOptionsDiv.hidden = true;
     colorSelect.selectedIndex = 0;
     hideColorOptions();
   } else {
-    // colorOptionsDiv.hidden = false;
+    colorOptionsDiv.hidden = false;
   };
 
   // Iterate through colorOptions and hide/show based on matching matchText
@@ -267,19 +267,29 @@ cvvInput.addEventListener('blur', (e) => {
 // Submit validation
 
 const submitValidator = () => {
-  if (nameValidator() && emailValidator() && activitiesValidator() && creditCardValidator()) {
+  // Run each individually to accumulate error messages as necessary
+  const nameValid = nameValidator();
+  const emailValid = emailValidator();
+  const activitiesValid = activitiesValidator();
+  const creditCardValid = creditCardValidator();
+
+  if (nameValid && emailValid && activitiesValid && creditCardValid) {
     return true;
   } else return false;
 };
 
 const creditCardValidator = () => {
+  // Ignore validation if the payment method isn't credit card
   if (paymentSelect.value !== 'credit card') {
     return true;
   };
 
-  if (ccInputValidator(ccNumInput, /^\d{13,16}$/, ccNumError, 'Card number must be 13-16 digits')
-        && ccInputValidator(zipInput, /^\d{5}$/, zipError, 'ZIP code must be five digits')
-        && ccInputValidator(cvvInput, /^\d{3}$/, cvvError, 'CVV must be three digits') ) {
+  // Run each individually to accumulate error messages as necessary
+  const ccNumValid = ccInputValidator(ccNumInput, /^\d{13,16}$/, ccNumError, 'Card number must be 13-16 digits');
+  const zipValid = ccInputValidator(zipInput, /^\d{5}$/, zipError, 'ZIP code must be five digits');
+  const cvvValid = ccInputValidator(cvvInput, /^\d{3}$/, cvvError, 'CVV must be three digits');
+
+  if (ccNumValid && zipValid && cvvValid) {
         return true;
   } else return false;
 };
