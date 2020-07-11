@@ -20,7 +20,8 @@ const bitcoinDiv = document.getElementById('bitcoin');
 let totalCost = 0;
 
 
-// Initial set-up steps
+// Initial set-up
+
 jobOtherInput.hidden = true;
 
 const pleaseOption = document.createElement('option');
@@ -48,7 +49,6 @@ creditDiv.parentElement.insertBefore(zipError, cvvError);
 const ccNumError = createErrorMsg();
 creditDiv.parentElement.insertBefore(ccNumError, zipError);
 
-
 // When page loads, set focus on the first field
 window.onload = nameInput.focus();
 
@@ -75,7 +75,7 @@ function hideColorOptions() {
   };
 };
 
-
+// Update Colors options to reflect the chosen Theme (if any)
 function updateColors(themeText) {
   // Extract the category portion of the theme choice text
   const colorOptions = document.querySelectorAll('#color option');
@@ -139,6 +139,7 @@ function updatePayment(type) {
   };
 };
 
+
 // Add dynamic behavior event listeners
 
 titleSelect.addEventListener('change', (e) => {
@@ -149,10 +150,12 @@ titleSelect.addEventListener('change', (e) => {
   };
 });
 
+
 designSelect.addEventListener('change', (e) => {
   const selectedText = designSelect.options[designSelect.selectedIndex].text;
   updateColors(selectedText);
 });
+
 
 activities.addEventListener('change', (e) => {
   const clicked = e.target;
@@ -184,6 +187,7 @@ activities.addEventListener('change', (e) => {
   };
 });
 
+
 paymentSelect.addEventListener('change', (e) => {
   const selectedValue = e.target.value;
   updatePayment(selectedValue);
@@ -193,7 +197,6 @@ paymentSelect.addEventListener('change', (e) => {
 // Validation functions
 
 const nameValidator = () => {
-  console.log('nameValidator triggered');
   const nameValue = nameInput.value;
   if (nameValue === '') {
     nameInput.classList.add('error');
@@ -208,7 +211,6 @@ const nameValidator = () => {
 
 
 const emailValidator = () => {
-  console.log('nameValidator triggered');
   const emailValue = emailInput.value;
   if (emailValue === '') {
     emailInput.classList.add('error');
@@ -231,7 +233,6 @@ const emailValidator = () => {
 
 
 const activitiesValidator = () => {
-  console.log('nameValidator triggered');
   // User must register for at least one activity
   for (let i = 0; i < activitiesCheckboxes.length; i++) {
     if (activitiesCheckboxes[i].checked) {
