@@ -1,3 +1,4 @@
+const form = document.querySelector('form');
 const nameInput = document.getElementById('name');
 const emailInput = document.getElementById('mail');
 const titleSelect = document.getElementById('title');
@@ -129,6 +130,57 @@ function updatePayment(type) {
   };
 };
 
+// Add dynamic behavior event listeners
+
+titleSelect.addEventListener('change', (e) => {
+  if (e.target.value == 'other') {
+    jobOtherInput.hidden = false;
+  } else {
+    jobOtherInput.hidden = true;
+  };
+});
+
+designSelect.addEventListener('change', (e) => {
+  const selectedText = designSelect.options[designSelect.selectedIndex].text;
+  updateColors(selectedText);
+});
+
+activities.addEventListener('change', (e) => {
+  const clicked = e.target;
+  const clickedTime = clicked.getAttribute('data-day-and-time');
+  const clickedCost = parseInt(clicked.getAttribute('data-cost'));
+
+  if (clicked.checked) activitiesError.hidden = true; // Clear any previous error
+
+  // Update total cost and display it accordingly
+  if (clicked.checked) {
+    totalCost += clickedCost;
+  } else {
+    totalCost -= clickedCost;
+  };
+  updateCost();
+
+  // Loop through activitiesCheckboxes and toggle ones that match clicked's date-time
+  for (let i = 0; i < activitiesCheckboxes.length; i++) {
+    const checkboxTime = activitiesCheckboxes[i].getAttribute('data-day-and-time');
+    if (checkboxTime === clickedTime && activitiesCheckboxes[i] !== clicked) {
+      if (clicked.checked) {
+        activitiesCheckboxes[i].disabled = true;
+        activitiesCheckboxes[i].parentNode.style.opacity = 0.2;
+      } else {
+        activitiesCheckboxes[i].disabled = false;
+        activitiesCheckboxes[i].parentNode.style.opacity = 1;
+      };
+    };
+  };
+});
+
+paymentSelect.addEventListener('change', (e) => {
+  const selectedValue = e.target.value;
+  updatePayment(selectedValue);
+});
+
+
 // Validation functions
 
 const nameValidator = () => {
@@ -182,9 +234,8 @@ const activitiesValidator = () => {
   return false;
 };
 
-// Credit card (three fields)
 
-const ccValidator = (input, match, errDiv, errMsg) => {
+const ccInputValidator = (input, match, errDiv, errMsg) => {
   const value = input.value;
   const isValid = match.test(value);
   if (!isValid) {
@@ -198,64 +249,41 @@ const ccValidator = (input, match, errDiv, errMsg) => {
   };
 };
 
-// Add event listeners
 
-titleSelect.addEventListener('change', (e) => {
-  if (e.target.value == 'other') {
-    jobOtherInput.hidden = false;
-  } else {
-    jobOtherInput.hidden = true;
-  };
-});
-
-designSelect.addEventListener('change', (e) => {
-  const selectedText = designSelect.options[designSelect.selectedIndex].text;
-  updateColors(selectedText);
-});
-
-activities.addEventListener('change', (e) => {
-  // Loop through activitiesCheckboxes and toggle ones that match clicked's date-time
-  const clicked = e.target;
-  const clickedTime = clicked.getAttribute('data-day-and-time');
-  const clickedCost = parseInt(clicked.getAttribute('data-cost'));
-
-  // Update total cost and display it accordingly
-  if (clicked.checked) {
-    totalCost += clickedCost;
-  } else {
-    totalCost -= clickedCost;
-  };
-  updateCost();
-
-  // Loop through activitiesCheckboxes and toggle ones that match clicked's date-time
-  for (let i = 0; i < activitiesCheckboxes.length; i++) {
-    const checkboxTime = activitiesCheckboxes[i].getAttribute('data-day-and-time');
-    const checkboxCost = parseInt(activitiesCheckboxes[i].getAttribute('data-cost'));
-    if (checkboxTime === clickedTime && activitiesCheckboxes[i] !== clicked) {
-      if (clicked.checked) {
-        activitiesCheckboxes[i].disabled = true;
-        activitiesCheckboxes[i].parentNode.style.opacity = 0.2;
-      } else {
-        activitiesCheckboxes[i].disabled = false;
-        activitiesCheckboxes[i].parentNode.style.opacity = 1;
-      };
-    };
-  };
-});
-
-paymentSelect.addEventListener('change', (e) => {
-  const selectedValue = e.target.value;
-  updatePayment(selectedValue);
-});
-
+// Add listeners for on-update validation to catch errors before submit
 nameInput.addEventListener('blur', nameValidator, false);
 emailInput.addEventListener('blur', emailValidator, false);
 ccNumInput.addEventListener('blur', (e) => {
-  ccValidator(ccNumInput, /^\d{13,16}$/, ccNumError, 'Card number must be 13-16 digits');
+  ccInputValidator(ccNumInput, /^\d{13,16}$/, ccNumError, 'Card number must be 13-16 digits');
 });
 zipInput.addEventListener('blur', (e) => {
-  ccValidator(zipInput, /^\d{5}$/, zipError, 'ZIP code must be five digits');
+  ccInputValidator(zipInput, /^\d{5}$/, zipError, 'ZIP code must be five digits');
 });
 cvvInput.addEventListener('blur', (e) => {
-  ccValidator(cvvInput, /^\d{3}$/, cvvError, 'CVV must be three digits');
+  ccInputValidator(cvvInput, /^\d{3}$/, cvvError, 'CVV must be three digits');
+});
+
+
+// Submit validation
+
+const submitValidator = () => {
+  if (nameValidator() && emailValidator() && activitiesValidator() && creditCardValidator()) {
+    return true;
+  } else return false;
+};
+
+const creditCardValidator = () => {
+  if (paymentSelect.value !== 'credit card') {
+    return true;
+  };
+
+  if (ccInputValidator(ccNumInput, /^\d{13,16}$/, ccNumError, 'Card number must be 13-16 digits')
+        && ccInputValidator(zipInput, /^\d{5}$/, zipError, 'ZIP code must be five digits')
+        && ccInputValidator(cvvInput, /^\d{3}$/, cvvError, 'CVV must be three digits') ) {
+        return true;
+  } else return false;
+};
+
+form.addEventListener('submit', (e) => {
+  if (!submitValidator()) e.preventDefault();
 });
